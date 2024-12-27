@@ -8,13 +8,14 @@ This is a small project designed to scrape as many websites as you need with min
 ## 🏗️ Project Structure
 The workflow is designed to minimize complexity and focus on daily tasks:
 
-1️⃣ **Index Page Handling**  
-   - Obtain an index URL and work on it daily. A new day means a new index page to scrape. 📅  
-   - Process a collection of data using tools like `BeautifulSoup` (bs4) or other scraping/crawling libraries. 🕸️  
-
-2️⃣ **Field Selectors Setup**  
-   - Define field selectors using XPath or BS4 selectors for each data field (e.g., `Bus` fields or other entities).  
-   - Ensure detailed pages are processed effectively. ✅  
+1️⃣ **Django Components**
+   - `crawler` app containing models and scraping logic. Here is where developers can work on the scraping logic. 🕷️
+   - Admin interface for data management
+   - Database migrations for bus and image data
+   - The scraper runs as a Django management command (`python manage.py scrap`)
+   - Data is automatically stored in SQLite database (configurable in settings.py)
+   - Access and manage scraped data through Django admin interface
+   - Extend models by adding fields and running migrations
 
 ---
 
