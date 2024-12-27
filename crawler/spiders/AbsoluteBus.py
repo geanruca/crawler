@@ -15,11 +15,11 @@ def scrap() -> None:
     buses = list()
     for url in cleaned_urls:
         bus = Bus(source_url=url)
-        bus = get_bus_info(bus)
+        bus = get_bus_info(bus, base_url)
         buses.append(bus)
 
 # This is going to be always pretty similar, just change the selectors. Sometimes we need to treat the data, and it can be done here using different services.
-def get_bus_info(bus: Bus) -> Bus:
+def get_bus_info(bus: Bus, base_url: str) -> Bus:
     page = bs4_get_page(bus.source_url)
     try:
         bus.title = page.select_one('#headertext').find_all('h2')[0].text
@@ -27,7 +27,8 @@ def get_bus_info(bus: Bus) -> Bus:
         bus.save()
         images = page.select_one('#bodytext').find_all('img')
         for image in images:
-            Image(bus=bus, url=image['src']).save()
+            src_ = base_url + image['src']
+            Image(bus=bus, url=src_).save()
     except:
         pass
     return bus
