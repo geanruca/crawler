@@ -1,8 +1,8 @@
-from src.Models.Bus import Bus
-from src.Services.CleanUrlCollectionService import clean_url_collection
-from src.Services.GetPageService import bs4_get_page
+from crawler.models import Bus, Image
+from crawler.spiders.services.CleanUrlCollectionService import clean_url_collection
+from crawler.spiders.services.GetPageService import bs4_get_page
 
-def get_index_urls() -> list[Bus]:
+def scrap() -> None:
     base_url = "http://absolutebus.com/"
     source_url="http://absolutebus.com/listings/"
     page = bs4_get_page(source_url)
@@ -17,7 +17,6 @@ def get_index_urls() -> list[Bus]:
         bus = Bus(source_url=url)
         bus = get_bus_info(bus)
         buses.append(bus)
-    return buses
 
 # This is going to be always pretty similar, just change the selectors. Sometimes we need to treat the data, and it can be done here using different services.
 def get_bus_info(bus: Bus) -> Bus:
@@ -25,8 +24,10 @@ def get_bus_info(bus: Bus) -> Bus:
     try:
         bus.title = page.select_one('#headertext').find_all('h2')[0].text
         bus.price = page.select_one('#bodytext').find_all('h3')[0].text
-        bus.image_url = page.select_one('#bodytext').find_all('img')[0]['src']
+        bus.save()
+        images = page.select_one('#bodytext').find_all('img')
+        for image in images:
+            Image(bus=bus, url=image['src']).save()
     except:
         pass
-    print(bus)
     return bus
