@@ -17,7 +17,7 @@ def scrap() -> None:
     cleaned_urls = clean_url_collection(cleaned_urls)
     buses = list()
     for url in cleaned_urls:
-        bus = Bus(source_url=url)
+        bus, _ = Bus.objects.get_or_create(source_url=url)
         bus = get_bus_info(bus)
         buses.append(bus)
 
@@ -32,10 +32,19 @@ def get_bus_info(bus: Bus) -> Bus:
 
             images = page.select_one('#bodytext').find_all('img')
             image_objects: List[Image] = []
-            for image in images:
-                src_ = urljoin(bus.source_url, image['src'])
-                image_objects.append(Image(bus=bus, url=src_))
-            Image.objects.bulk_create(image_objects)
+            if(bus.get_images().count() > 0):
+                for image in images:
+                    src_ = urljoin(bus.source_url, image['src'])
+                    image_objects.append(Image(bus=bus, url=src_))
+                Image.objects.bulk_create(image_objects)
+            else:
+                for image in images:
+                    src_ = urljoin(bus.source_url, image['src'])
+                    image, _ = Image.objects.update_or_create(
+                    bus=bus,
+                    url=src_,
+                    defaults={"bus": bus}
+                )
     except:
         pass
     return bus

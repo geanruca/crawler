@@ -5,7 +5,7 @@ class Bus(models.Model):
     price = models.CharField(max_length=255)
     source_url = models.CharField(max_length=255)
     def __str__(self):
-        return self.title
+        return self.source_url
     def get_images(self):
         return Image.objects.filter(bus=self)
 
